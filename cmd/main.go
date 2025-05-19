@@ -3,22 +3,18 @@ package main
 import (
 	"fmt"
 	"net/http"
-
-	"github.com/SavenkoArtem/pshelper/internal/home" // Импортируем обработчик домашней страницы
 )
 
 func main() {
-	// Регистрируем обработчики
-	http.HandleFunc("/", home.NewHandler)
+	handler, port := App()
 
-	// Настраиваем порт
-	port := "3000"
-	fmt.Printf("Server started %s\n", port)
-	fmt.Println("Go to the http://localhost:" + port)
+	server := http.Server{
+		Addr:    ":" + port,
+		Handler: handler,
+	}
 
-	// Запускаем сервер
-	err := http.ListenAndServe(":"+port, nil)
-	if err != nil {
-		fmt.Printf("Error start server: %s\n", err)
+	fmt.Println("Server is listening on port " + port)
+	if err := server.ListenAndServe(); err != nil {
+		panic(err)
 	}
 }
